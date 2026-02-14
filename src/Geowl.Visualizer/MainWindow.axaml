@@ -1,20 +1,24 @@
-<!-- <Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="Geowl.Visualizer.MainWindow"
-        Title="Geowl.Visualizer">
-    Welcome to Avalonia!
-</Window> -->
-
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="Geowl.Visualizer.MainWindow"
         Title="Geometry Visualizer"
         Width="800" Height="600">
-    
-    <Canvas Name="DrawingCanvas" Background="White">
-        <!-- ここに点が描画される -->
-    </Canvas>
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- ボタンエリア（上部） -->
+        <!-- <Button Grid.Row="0" Content="Clear" Margin="5" Clicked="Clear_Clicked"/> -->
+         
+         <StackPanel Orientation="Horizontal" Spacing="5">
+            <Button Click="DeleteAllClickHandler">全消去</Button>
+            <Button Click="DeleteLineClickHandler">線分消去</Button>
+        </StackPanel>
+        
+        <!-- Canvasエリア（下部、残りすべて） -->
+        <Canvas Grid.Row="1"
+                x:Name="MainCanvas" 
+                Background="White"
+                PointerPressed="Canvas_PointerPressed">
+            <!-- ここに点が追加される -->
+        </Canvas>
+    </Grid>
 </Window>
