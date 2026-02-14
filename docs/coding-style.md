@@ -1,0 +1,541 @@
+# Microsoft公式コーディングスタイル設定ガイド
+
+## 1. 前提知識
+
+**.NET 10では標準で含まれる機能**:
+- `Microsoft.CodeAnalysis.NetAnalyzers`（追加インストール不要）
+- `EnableNETAnalyzers`がデフォルトで有効
+
+**追加で必要なもの**:
+- `.editorconfig`（コーディング規則定義）
+- `StyleCop.Analyzers`（より詳細なスタイル規則、任意）
+
+---
+
+## 2. 基本セットアップ
+
+### Step 1: .editorconfig作成
+
+```bash
+# プロジェクトルートで実行
+dotnet new editorconfig
+```
+
+### Step 2: Microsoftスタイル適用
+
+`.editorconfig`を以下に置き換え：
+
+```ini
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# All files
+[*]
+charset = utf-8
+indent_style = space
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Code files
+[*.{cs,csx,vb,vbx}]
+indent_size = 4
+
+# XML project files
+[*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
+indent_size = 2
+
+# XML config files
+[*.{props,targets,ruleset,config,nuspec,resx,vsixmanifest,vsct}]
+indent_size = 2
+
+# JSON files
+[*.json]
+indent_size = 2
+
+# YAML files
+[*.{yml,yaml}]
+indent_size = 2
+
+# Shell script files
+[*.sh]
+end_of_line = lf
+
+# Markdown files
+[*.md]
+trim_trailing_whitespace = false
+
+# C# files
+[*.cs]
+
+#### Core EditorConfig Options ####
+
+# Indentation and spacing
+indent_size = 4
+tab_width = 4
+
+# New line preferences
+end_of_line = crlf
+insert_final_newline = true
+
+#### .NET Coding Conventions ####
+
+# Organize usings
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
+
+# this. and Me. preferences
+dotnet_style_qualification_for_field = false:warning
+dotnet_style_qualification_for_property = false:warning
+dotnet_style_qualification_for_method = false:warning
+dotnet_style_qualification_for_event = false:warning
+
+# Language keywords vs BCL types preferences
+dotnet_style_predefined_type_for_locals_parameters_members = true:warning
+dotnet_style_predefined_type_for_member_access = true:warning
+
+# Parentheses preferences
+dotnet_style_parentheses_in_arithmetic_binary_operators = always_for_clarity:suggestion
+dotnet_style_parentheses_in_relational_binary_operators = always_for_clarity:suggestion
+dotnet_style_parentheses_in_other_binary_operators = always_for_clarity:suggestion
+dotnet_style_parentheses_in_other_operators = never_if_unnecessary:suggestion
+
+# Modifier preferences
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:warning
+dotnet_style_readonly_field = true:warning
+
+# Expression-level preferences
+dotnet_style_object_initializer = true:suggestion
+dotnet_style_collection_initializer = true:suggestion
+dotnet_style_explicit_tuple_names = true:warning
+dotnet_style_prefer_inferred_tuple_names = true:suggestion
+dotnet_style_prefer_inferred_anonymous_type_member_names = true:suggestion
+dotnet_style_prefer_auto_properties = true:suggestion
+dotnet_style_prefer_conditional_expression_over_assignment = true:silent
+dotnet_style_prefer_conditional_expression_over_return = true:silent
+dotnet_style_prefer_compound_assignment = true:suggestion
+dotnet_style_prefer_simplified_interpolation = true:suggestion
+dotnet_style_prefer_simplified_boolean_expressions = true:suggestion
+
+# Null-checking preferences
+dotnet_style_coalesce_expression = true:warning
+dotnet_style_null_propagation = true:warning
+dotnet_style_prefer_is_null_check_over_reference_equality_method = true:warning
+
+# File header preferences
+# dotnet_diagnostic.IDE0073.severity = warning
+# file_header_template = unset
+
+#### C# Coding Conventions ####
+
+# var preferences
+csharp_style_var_for_built_in_types = true:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_style_var_elsewhere = true:suggestion
+
+# Expression-bodied members
+csharp_style_expression_bodied_methods = false:silent
+csharp_style_expression_bodied_constructors = false:silent
+csharp_style_expression_bodied_operators = false:silent
+csharp_style_expression_bodied_properties = true:silent
+csharp_style_expression_bodied_indexers = true:silent
+csharp_style_expression_bodied_accessors = true:silent
+csharp_style_expression_bodied_lambdas = true:silent
+csharp_style_expression_bodied_local_functions = false:silent
+
+# Pattern matching preferences
+csharp_style_pattern_matching_over_is_with_cast_check = true:warning
+csharp_style_pattern_matching_over_as_with_null_check = true:warning
+csharp_style_prefer_switch_expression = true:suggestion
+csharp_style_prefer_pattern_matching = true:suggestion
+csharp_style_prefer_not_pattern = true:suggestion
+csharp_style_prefer_extended_property_pattern = true:suggestion
+
+# Null-checking preferences
+csharp_style_throw_expression = true:suggestion
+csharp_style_conditional_delegate_call = true:warning
+
+# Modifier preferences
+csharp_prefer_static_local_function = true:warning
+csharp_preferred_modifier_order = public,private,protected,internal,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,volatile,async:suggestion
+
+# Code-block preferences
+csharp_prefer_braces = true:warning
+csharp_prefer_simple_using_statement = true:suggestion
+csharp_style_namespace_declarations = file_scoped:warning
+
+# Expression-level preferences
+csharp_prefer_simple_default_expression = true:suggestion
+csharp_style_pattern_local_over_anonymous_function = true:suggestion
+csharp_style_inlined_variable_declaration = true:warning
+csharp_style_deconstructed_variable_declaration = true:suggestion
+csharp_style_prefer_index_operator = true:suggestion
+csharp_style_prefer_range_operator = true:suggestion
+csharp_style_implicit_object_creation_when_type_is_apparent = true:suggestion
+
+# 'using' directive preferences
+csharp_using_directive_placement = outside_namespace:warning
+
+#### C# Formatting Rules ####
+
+# New line preferences
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+csharp_new_line_before_members_in_object_initializers = true
+csharp_new_line_before_members_in_anonymous_types = true
+csharp_new_line_between_query_expression_clauses = true
+
+# Indentation preferences
+csharp_indent_case_contents = true
+csharp_indent_switch_labels = true
+csharp_indent_labels = no_change
+csharp_indent_block_contents = true
+csharp_indent_braces = false
+csharp_indent_case_contents_when_block = false
+
+# Space preferences
+csharp_space_after_cast = false
+csharp_space_after_keywords_in_control_flow_statements = true
+csharp_space_between_parentheses = false
+csharp_space_before_colon_in_inheritance_clause = true
+csharp_space_after_colon_in_inheritance_clause = true
+csharp_space_around_binary_operators = before_and_after
+csharp_space_between_method_declaration_parameter_list_parentheses = false
+csharp_space_between_method_declaration_empty_parameter_list_parentheses = false
+csharp_space_between_method_declaration_name_and_open_parenthesis = false
+csharp_space_between_method_call_parameter_list_parentheses = false
+csharp_space_between_method_call_empty_parameter_list_parentheses = false
+csharp_space_between_method_call_name_and_opening_parenthesis = false
+csharp_space_after_comma = true
+csharp_space_after_dot = false
+csharp_space_after_semicolon_in_for_statement = true
+csharp_space_before_semicolon_in_for_statement = false
+csharp_space_around_declaration_statements = false
+csharp_space_before_open_square_brackets = false
+csharp_space_between_empty_square_brackets = false
+csharp_space_between_square_brackets = false
+
+# Wrapping preferences
+csharp_preserve_single_line_statements = false
+csharp_preserve_single_line_blocks = true
+
+#### Naming styles ####
+
+# Naming rules
+
+dotnet_naming_rule.interface_should_be_begins_with_i.severity = warning
+dotnet_naming_rule.interface_should_be_begins_with_i.symbols = interface
+dotnet_naming_rule.interface_should_be_begins_with_i.style = begins_with_i
+
+dotnet_naming_rule.types_should_be_pascal_case.severity = warning
+dotnet_naming_rule.types_should_be_pascal_case.symbols = types
+dotnet_naming_rule.types_should_be_pascal_case.style = pascal_case
+
+dotnet_naming_rule.non_field_members_should_be_pascal_case.severity = warning
+dotnet_naming_rule.non_field_members_should_be_pascal_case.symbols = non_field_members
+dotnet_naming_rule.non_field_members_should_be_pascal_case.style = pascal_case
+
+dotnet_naming_rule.private_or_internal_field_should_be_begins_with_underscore.severity = warning
+dotnet_naming_rule.private_or_internal_field_should_be_begins_with_underscore.symbols = private_or_internal_field
+dotnet_naming_rule.private_or_internal_field_should_be_begins_with_underscore.style = begins_with_underscore
+
+dotnet_naming_rule.private_or_internal_static_field_should_be_begins_with_s_underscore.severity = warning
+dotnet_naming_rule.private_or_internal_static_field_should_be_begins_with_s_underscore.symbols = private_or_internal_static_field
+dotnet_naming_rule.private_or_internal_static_field_should_be_begins_with_s_underscore.style = begins_with_s_underscore
+
+dotnet_naming_rule.constant_should_be_pascal_case.severity = warning
+dotnet_naming_rule.constant_should_be_pascal_case.symbols = constant
+dotnet_naming_rule.constant_should_be_pascal_case.style = pascal_case
+
+# Symbol specifications
+
+dotnet_naming_symbols.interface.applicable_kinds = interface
+dotnet_naming_symbols.interface.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
+dotnet_naming_symbols.interface.required_modifiers = 
+
+dotnet_naming_symbols.private_or_internal_field.applicable_kinds = field
+dotnet_naming_symbols.private_or_internal_field.applicable_accessibilities = internal, private, private_protected
+dotnet_naming_symbols.private_or_internal_field.required_modifiers = 
+
+dotnet_naming_symbols.private_or_internal_static_field.applicable_kinds = field
+dotnet_naming_symbols.private_or_internal_static_field.applicable_accessibilities = internal, private, private_protected
+dotnet_naming_symbols.private_or_internal_static_field.required_modifiers = static
+
+dotnet_naming_symbols.types.applicable_kinds = class, struct, interface, enum
+dotnet_naming_symbols.types.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
+dotnet_naming_symbols.types.required_modifiers = 
+
+dotnet_naming_symbols.non_field_members.applicable_kinds = property, event, method
+dotnet_naming_symbols.non_field_members.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
+dotnet_naming_symbols.non_field_members.required_modifiers = 
+
+dotnet_naming_symbols.constant.applicable_kinds = field, local
+dotnet_naming_symbols.constant.applicable_accessibilities = *
+dotnet_naming_symbols.constant.required_modifiers = const
+
+# Naming styles
+
+dotnet_naming_style.pascal_case.required_prefix = 
+dotnet_naming_style.pascal_case.required_suffix = 
+dotnet_naming_style.pascal_case.word_separator = 
+dotnet_naming_style.pascal_case.capitalization = pascal_case
+
+dotnet_naming_style.begins_with_i.required_prefix = I
+dotnet_naming_style.begins_with_i.required_suffix = 
+dotnet_naming_style.begins_with_i.word_separator = 
+dotnet_naming_style.begins_with_i.capitalization = pascal_case
+
+dotnet_naming_style.begins_with_underscore.required_prefix = _
+dotnet_naming_style.begins_with_underscore.required_suffix = 
+dotnet_naming_style.begins_with_underscore.word_separator = 
+dotnet_naming_style.begins_with_underscore.capitalization = camel_case
+
+dotnet_naming_style.begins_with_s_underscore.required_prefix = s_
+dotnet_naming_style.begins_with_s_underscore.required_suffix = 
+dotnet_naming_style.begins_with_s_underscore.word_separator = 
+dotnet_naming_style.begins_with_s_underscore.capitalization = camel_case
+
+#### Code Analysis ####
+
+# Enable all analyzers by default
+dotnet_analyzer_diagnostic.severity = warning
+
+# CA1014: Mark assemblies with CLSCompliant - not needed for learning projects
+dotnet_diagnostic.CA1014.severity = none
+
+# CA1031: Do not catch general exception types - sometimes needed
+dotnet_diagnostic.CA1031.severity = suggestion
+
+# CA1303: Do not pass literals as localized parameters - not needed for learning
+dotnet_diagnostic.CA1303.severity = none
+
+# CA1848: Use LoggerMessage delegates - optimization, can be suggestion
+dotnet_diagnostic.CA1848.severity = suggestion
+
+# CA2007: Do not directly await a Task - library specific
+dotnet_diagnostic.CA2007.severity = none
+```
+
+### Step 3: .csprojに設定追加
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    
+    <!-- コード分析設定 -->
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    
+    <!-- 警告レベル -->
+    <AnalysisMode>All</AnalysisMode>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+</Project>
+```
+
+---
+
+## 3. StyleCop追加（オプション、より厳格に）
+
+```bash
+dotnet add package StyleCop.Analyzers
+```
+
+`.editorconfig`に以下を追加：
+
+```ini
+#### StyleCop Analyzers ####
+
+# SA0001: XML comment analysis is disabled due to project configuration
+dotnet_diagnostic.SA0001.severity = none
+
+# SA1027: Tabs must not be used
+dotnet_diagnostic.SA1027.severity = warning
+
+# SA1101: Prefix local calls with this (Microsoftスタイルでは不要)
+dotnet_diagnostic.SA1101.severity = none
+
+# SA1200: Using directives should be placed correctly (file-scopedで対応)
+dotnet_diagnostic.SA1200.severity = none
+
+# SA1309: Field names should not begin with underscore (Microsoftスタイルでは必要)
+dotnet_diagnostic.SA1309.severity = none
+
+# SA1633: File should have header (学習プロジェクトでは不要)
+dotnet_diagnostic.SA1633.severity = none
+
+# SA1600: Elements should be documented (段階的に有効化)
+dotnet_diagnostic.SA1600.severity = suggestion
+
+# SA1601: Partial elements should be documented
+dotnet_diagnostic.SA1601.severity = suggestion
+```
+
+---
+
+## 4. コーディング例（Microsoft標準）
+
+### ファイル構成
+```csharp
+namespace GeometryVisualizer.Geometry;
+
+public class Point2D
+{
+    private readonly double _x;
+    private readonly double _y;
+
+    public Point2D(double x, double y)
+    {
+        _x = x;
+        _y = y;
+    }
+
+    public double X => _x;
+    public double Y => _y;
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is not Point2D other)
+        {
+            return false;
+        }
+
+        return _x == other._x && _y == other._y;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_x, _y);
+    }
+
+    public override string ToString()
+    {
+        return $"({_x}, {_y})";
+    }
+}
+```
+
+### 主要ルール適用例
+
+```csharp
+// ✓ file-scoped namespace
+namespace GeometryVisualizer.Geometry;
+
+// ✓ プライベートフィールドは _camelCase
+private readonly double _radius;
+
+// ✓ publicメンバーはPascalCase
+public double Radius => _radius;
+
+// ✓ staticフィールドは s_camelCase
+private static readonly Point2D s_origin = new(0, 0);
+
+// ✓ インターフェースは I で始まる
+public interface IShape
+{
+}
+
+// ✓ varは型が明らかな場合
+var point = new Point2D(1.0, 2.0);
+
+// ✓ 中括弧は常に
+if (condition)
+{
+    DoSomething();
+}
+
+// ✓ using は namespace外
+using System;
+using System.Collections.Generic;
+
+namespace MyNamespace;
+```
+
+---
+
+## 5. ビルド＆確認
+
+```bash
+# ビルドして警告確認
+dotnet build
+
+# 詳細表示
+dotnet build -v detailed
+
+# コードスタイルのみチェック
+dotnet format --verify-no-changes
+```
+
+---
+
+## 6. IDE設定
+
+### Visual Studio 2022
+- 自動的に`.editorconfig`を認識
+- **Ctrl+K, Ctrl+D**: ドキュメント全体フォーマット
+- **Ctrl+K, Ctrl+E**: 選択範囲フォーマット
+
+### VS Code
+`settings.json`に追加：
+```json
+{
+  "omnisharp.enableEditorConfigSupport": true,
+  "omnisharp.enableRoslynAnalyzers": true,
+  "editor.formatOnSave": true,
+  "[csharp]": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp"
+  }
+}
+```
+
+---
+
+## 7. チートシート
+
+### 命名規則
+| 要素 | 規則 | 例 |
+|------|------|-----|
+| クラス | PascalCase | `Point2D` |
+| インターフェース | IPascalCase | `IShape` |
+| メソッド | PascalCase | `CalculateDistance()` |
+| プロパティ | PascalCase | `Radius` |
+| プライベートフィールド | _camelCase | `_radius` |
+| 静的プライベートフィールド | s_camelCase | `s_origin` |
+| パラメータ | camelCase | `radius` |
+| ローカル変数 | camelCase | `distance` |
+| 定数 | PascalCase | `MaxValue` |
+
+### コードスタイル
+- **namespace**: file-scoped (`namespace MyNamespace;`)
+- **中括弧**: 常に使用
+- **using**: namespace外に配置
+- **var**: 型が明らかな場合使用
+- **this**: 使用しない（フィールドは`_`で区別）
+
+---
+
+## まとめ
+
+この設定で**Microsoftの公式コーディングスタイル**に準拠できます。
+
+**すぐに実行**:
+```bash
+# 1. .editorconfig作成（上記内容をコピー）
+dotnet new editorconfig
+
+# 2. ビルドして確認
+dotnet build
+
+# 3. フォーマット適用
+dotnet format
+```
+
+何か調整が必要な点はありますか？
