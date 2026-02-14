@@ -1,0 +1,1 @@
+dotnet run --project src/Geowl.Visualizer/Geowl.Visualizer.csproj

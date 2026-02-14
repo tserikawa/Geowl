@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Geowl.Core/Geowl.Core.csproj" />
+    <Project Path="src/Geowl.Visualizer/Geowl.Visualizer.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Geowl.Core.Tests/Geowl.Core.Tests.csproj" />
+  </Folder>
+</Solution>
