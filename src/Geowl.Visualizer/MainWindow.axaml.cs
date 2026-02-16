@@ -3,17 +3,38 @@ using Avalonia.Controls.Shapes;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Geowl.Core.Primitive;
+using Geowl.Visualizer.Commands;
 using Avalonia.Input;
 using System;
 using Avalonia.Interactivity;
 using System.Linq;
 using System.Collections.Generic;
+using Geowl.Visualizer.Models;
 
 namespace Geowl.Visualizer;
 
 public partial class MainWindow : Window
 {
+    private GeowlDocument _document = new();
+
     private List<Line> _lines = new List<Line>();
+
+    /// <summary>
+    /// 線分追加モードか
+    /// </summary>
+    private bool _isLineAddMode = false;
+
+    /// <summary>
+    /// 最初の点が選択されたか
+    /// </summary>
+    private bool _isFirstPointClicked = false;
+
+    /// <summary>
+    /// 最初の点
+    /// </summary>
+    private Point2D _firstPoint = Point2D.Unset;
+
+    private readonly CommandInvoker _commandInvoker = new();
 
     public MainWindow()
     {
@@ -36,53 +57,54 @@ public partial class MainWindow : Window
         DrawLine(line2);
 
     }
-
     private void DrawPoint(Point2D point, double radius = 5)
     {
-        var ellipse = new Ellipse
-        {
-            Width = radius * 2,
-            Height = radius * 2,
-            Fill = Brushes.Red,
-            Stroke = Brushes.Black,
-            StrokeThickness = 1
-        };
-
-        Canvas.SetLeft(ellipse, point.X - radius);
-        Canvas.SetTop(ellipse, point.Y - radius);
-
-        MainCanvas.Children.Add(ellipse);
+        var command = new DrawPointCommand(_document, MainCanvas, point, radius);
+        _commandInvoker.Execute(command);
     }
 
     private void DrawLine(Line2D line2d, double width = 3)
     {
-        var line = new Line
-        {
-            StartPoint = new Point(line2d.Start.X, line2d.Start.Y),
-            EndPoint = new Point(line2d.End.X, line2d.End.Y),
-            Stroke = Brushes.Black,
-            Width = width,
-        };
-        MainCanvas.Children.Add(line);
-        _lines.Add(line);
+        var command = new DrawLineCommand(MainCanvas, line2d, width);
+        _commandInvoker.Execute(command);
     }
 
     private void Canvas_PointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        // クリック位置を取得
         var position = e.GetPosition(MainCanvas);
-
-        // Point2D に変換
         var point = new Point2D(position.X, position.Y);
-        // _points.Add(point);
 
-        // 点を描画
-        DrawPoint(point);
+        if (!_isLineAddMode)
+        {
+            DrawPoint(point);
+        }
+        else
+        {
+            if (!_isFirstPointClicked)
+            {
+                _firstPoint = point;
+                _isFirstPointClicked = true;
+                DrawPoint(point);
+            }
+            else
+            {
+                DrawPoint(point);
+                var line = new Line2D(_firstPoint, point);
+                DrawLine(line);
+
+                _firstPoint = Point2D.Unset;
+                _isFirstPointClicked = false;
+                _isLineAddMode = false;
+            }
+        }
     }
 
     public void DeleteAllClickHandler(object? sender, RoutedEventArgs e)
     {
-        MainCanvas.Children.Clear();
+        foreach (var point in _document.Points)
+        {
+            _ = MainCanvas.Children.Remove(point);
+        }
     }
 
     public void DeleteLineClickHandler(object? sender, RoutedEventArgs e)
@@ -91,5 +113,12 @@ public partial class MainWindow : Window
         {
             _ = MainCanvas.Children.Remove(line);
         }
+    }
+
+    public void AddLineClickHandler(object? sender, RoutedEventArgs e)
+    {
+        _isLineAddMode = true;
+        _isFirstPointClicked = false;
+        _firstPoint = Point2D.Unset;
     }
 }

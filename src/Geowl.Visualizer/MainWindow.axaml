@@ -11,6 +11,7 @@
          <StackPanel Orientation="Horizontal" Spacing="5">
             <Button Click="DeleteAllClickHandler">全消去</Button>
             <Button Click="DeleteLineClickHandler">線分消去</Button>
+            <Button Click="AddLineClickHandler">線分追加</Button>
         </StackPanel>
         
         <!-- Canvasエリア（下部、残りすべて） -->
