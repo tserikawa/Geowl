@@ -10,37 +10,34 @@ using Avalonia.Interactivity;
 using System.Linq;
 using System.Collections.Generic;
 using Geowl.Visualizer.Models;
+using Geowl.Visualizer.Tools;
 
 namespace Geowl.Visualizer;
 
 public partial class MainWindow : Window
 {
     private GeowlDocument _document = new();
-
     private List<Line> _lines = new List<Line>();
 
-    /// <summary>
-    /// 線分追加モードか
-    /// </summary>
-    private bool _isLineAddMode = false;
-
-    /// <summary>
-    /// 最初の点が選択されたか
-    /// </summary>
-    private bool _isFirstPointClicked = false;
-
-    /// <summary>
-    /// 最初の点
-    /// </summary>
-    private Point2D _firstPoint = Point2D.Unset;
-
+    // ツール関連
     private readonly CommandInvoker _commandInvoker = new();
+    private ITool _currentTool;
+    private readonly PointTool _pointTool;
+    private readonly LineTool _lineTool;
 
     public MainWindow()
     {
         InitializeComponent();
 
-        // Point2Dオブジェクトを描画
+        // ツールを初期化
+        _pointTool = new PointTool(MainCanvas, _commandInvoker);
+        _lineTool = new LineTool(MainCanvas, _commandInvoker);
+
+        // デフォルトはPointToolを有効化
+        _currentTool = _pointTool;
+        _currentTool.Activate();
+
+        // 初期表示用のサンプル（後で削除予定）
         var point1 = new Point2D(100, 100);
         var point2 = new Point2D(200, 200);
         var point3 = new Point2D(100, 200);
@@ -55,11 +52,11 @@ public partial class MainWindow : Window
         DrawLine(line1);
         var line2 = new Line2D(point3, point4);
         DrawLine(line2);
-
     }
+
     private void DrawPoint(Point2D point, double radius = 5)
     {
-        var command = new DrawPointCommand(_document, MainCanvas, point, radius);
+        var command = new DrawPointCommand(MainCanvas, point, radius);
         _commandInvoker.Execute(command);
     }
 
@@ -74,29 +71,8 @@ public partial class MainWindow : Window
         var position = e.GetPosition(MainCanvas);
         var point = new Point2D(position.X, position.Y);
 
-        if (!_isLineAddMode)
-        {
-            DrawPoint(point);
-        }
-        else
-        {
-            if (!_isFirstPointClicked)
-            {
-                _firstPoint = point;
-                _isFirstPointClicked = true;
-                DrawPoint(point);
-            }
-            else
-            {
-                DrawPoint(point);
-                var line = new Line2D(_firstPoint, point);
-                DrawLine(line);
-
-                _firstPoint = Point2D.Unset;
-                _isFirstPointClicked = false;
-                _isLineAddMode = false;
-            }
-        }
+        // 現在のツールに処理を委譲
+        _currentTool.OnPointerPressed(point);
     }
 
     public void DeleteAllClickHandler(object? sender, RoutedEventArgs e)
@@ -114,11 +90,13 @@ public partial class MainWindow : Window
             _ = MainCanvas.Children.Remove(line);
         }
     }
-
     public void AddLineClickHandler(object? sender, RoutedEventArgs e)
     {
-        _isLineAddMode = true;
-        _isFirstPointClicked = false;
-        _firstPoint = Point2D.Unset;
+        // 現在のツールを無効化
+        _currentTool.Deactivate();
+
+        // LineToolに切り替え
+        _currentTool = _lineTool;
+        _currentTool.Activate();
     }
 }

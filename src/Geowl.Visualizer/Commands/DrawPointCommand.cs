@@ -8,14 +8,13 @@ namespace Geowl.Visualizer.Commands;
 
 public class DrawPointCommand : ICommand
 {
-    private readonly GeowlDocument _document;
     private readonly Canvas _canvas;
     private readonly Point2D _point;
     private readonly double _radius;
 
-    public DrawPointCommand(GeowlDocument document, Canvas canvas, Point2D point, double radius = 5)
+    // GeowlDocumentパラメータを削除
+    public DrawPointCommand(Canvas canvas, Point2D point, double radius = 5)
     {
-        _document = document;
         _canvas = canvas;
         _point = point;
         _radius = radius;
@@ -36,6 +35,6 @@ public class DrawPointCommand : ICommand
         Canvas.SetTop(ellipse, _point.Y - _radius);
 
         _canvas.Children.Add(ellipse);
-        _document.AddPoint(ellipse);
+        // _document.AddPoint(ellipse); ← 後で追加
     }
 }
