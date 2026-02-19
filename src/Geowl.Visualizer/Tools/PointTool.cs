@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Geowl.Core.Primitive;
 using Geowl.Visualizer.Commands;
+using Geowl.Visualizer.Models;
 
 namespace Geowl.Visualizer.Tools;
 
@@ -9,11 +10,13 @@ namespace Geowl.Visualizer.Tools;
 /// </summary>
 public class PointTool : ITool
 {
+    private readonly GeowlDocument _document;
     private readonly Canvas _canvas;
     private readonly CommandInvoker _commandInvoker;
 
-    public PointTool(Canvas canvas, CommandInvoker commandInvoker)
+    public PointTool(Canvas canvas, CommandInvoker commandInvoker, GeowlDocument document)
     {
+        _document = document;
         _canvas = canvas;
         _commandInvoker = commandInvoker;
     }
@@ -31,7 +34,7 @@ public class PointTool : ITool
     public void OnPointerPressed(Point2D position)
     {
         // クリックされた位置に点を描画
-        var command = new DrawPointCommand(_canvas, position);
+        var command = new DrawPointCommand(_canvas, _document, position);
         _commandInvoker.Execute(command);
     }
 }

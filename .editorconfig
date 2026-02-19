@@ -34,6 +34,10 @@ indent_size = 2
 [*.sh]
 end_of_line = lf
 
+# Avalonia XAML files
+[*.axaml]
+end_of_line = lf
+
 # Markdown files
 [*.md]
 trim_trailing_whitespace = false

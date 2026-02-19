@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
 using Avalonia.Media;
 using Geowl.Core.Primitive;
+using Geowl.Visualizer.Models;
 
 namespace Geowl.Visualizer.Commands;
 
@@ -10,12 +11,14 @@ namespace Geowl.Visualizer.Commands;
 public class DrawLineCommand : ICommand
 {
     private readonly Canvas _canvas;
+    private readonly GeowlDocument _document;
     private readonly Line2D _line;
     private readonly double _width;
 
-    public DrawLineCommand(Canvas canvas, Line2D line, double width = 3)
+    public DrawLineCommand(Canvas canvas, GeowlDocument document, Line2D line, double width = 3)
     {
         _canvas = canvas;
+        _document = document;
         _line = line;
         _width = width;
     }
@@ -31,5 +34,6 @@ public class DrawLineCommand : ICommand
         };
 
         _canvas.Children.Add(line);
+        _document.AddLine(line);
     }
 }
