@@ -4,22 +4,40 @@
         Title="Geometry Visualizer"
         Width="800" Height="600">
 
-    <Grid RowDefinitions="Auto,*">
-        <!-- ボタンエリア（上部） -->
-        <!-- <Button Grid.Row="0" Content="Clear" Margin="5" Clicked="Clear_Clicked"/> -->
-         
-         <StackPanel Orientation="Horizontal" Spacing="5">
-            <Button Click="DeleteAllClickHandler">全消去</Button>
-            <Button Click="DeleteLineClickHandler">線分消去</Button>
-            <Button Click="AddLineClickHandler">線分追加</Button>
-        </StackPanel>
-        
-        <!-- Canvasエリア（下部、残りすべて） -->
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- ツールバー（上部） -->
+        <Border Grid.Row="0"
+                Background="#512BD4"
+                Padding="8">
+            <StackPanel Orientation="Horizontal"
+                        Spacing="8">
+                <Button Click="DeleteAllClickHandler"
+                        Background="#6F43D8"
+                        Foreground="White">全消去</Button>
+                <Button Click="DeleteLineClickHandler"
+                        Background="#6F43D8"
+                        Foreground="White">線分消去</Button>
+                <Button Click="AddLineClickHandler"
+                        Background="#6F43D8"
+                        Foreground="White">線分追加</Button>
+            </StackPanel>
+        </Border>
+
+        <!-- Canvasエリア（中央） -->
         <Canvas Grid.Row="1"
-                x:Name="MainCanvas" 
+                x:Name="MainCanvas"
                 Background="White"
-                PointerPressed="Canvas_PointerPressed">
-            <!-- ここに点が追加される -->
-        </Canvas>
+                PointerPressed="Canvas_PointerPressed"/>
+
+        <!-- ステータスバー（下部） -->
+        <Border Grid.Row="2"
+                Background="#1E1E1E"
+                Padding="8,4">
+            <TextBlock x:Name="ModeLabel"
+                       Foreground="#CCCCCC"
+                       FontFamily="Consolas,Menlo,monospace"
+                       FontSize="12"
+                       Text="点追加モード"/>
+        </Border>
     </Grid>
 </Window>

@@ -21,6 +21,9 @@ public class PointTool : ITool
         _commandInvoker = commandInvoker;
     }
 
+    /// <inheritdoc/>
+    public string Name => "点追加モード";
+
     public void Activate()
     {
         // このツールは状態を持たないので、特にやることはない

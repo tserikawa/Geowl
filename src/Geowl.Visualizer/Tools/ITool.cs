@@ -8,6 +8,11 @@ namespace Geowl.Visualizer.Tools;
 public interface ITool
 {
     /// <summary>
+    /// 表示名
+    /// </summary>
+    string Name { get; }
+
+    /// <summary>
     /// ツールが有効化されたときに呼ばれます
     /// </summary>
     void Activate();

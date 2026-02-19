@@ -26,6 +26,9 @@ public class LineTool : ITool
     }
 
     /// <inheritdoc/>
+    public string Name => "線分追加モード";
+
+    /// <inheritdoc/>
     public void Activate()
     {
         _hasFirstPoint = false;

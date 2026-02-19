@@ -36,6 +36,7 @@ public partial class MainWindow : Window
         // デフォルトはPointToolを有効化
         _currentTool = _pointTool;
         _currentTool.Activate();
+        ModeLabel.Text = _currentTool.Name;
     }
 
     private void Canvas_PointerPressed(object? sender, PointerPressedEventArgs e)
@@ -63,5 +64,6 @@ public partial class MainWindow : Window
         _currentTool.Deactivate();
         _currentTool = _lineTool;
         _currentTool.Activate();
+        ModeLabel.Text = _currentTool.Name;
     }
 }
